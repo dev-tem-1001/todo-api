@@ -1,6 +1,7 @@
 package com.example.todo.api.service;
 
 import com.example.todo.api.dto.TaskDto;
+import com.example.todo.api.exception.TaskCompletedException;
 import com.example.todo.api.model.Task;
 import com.example.todo.api.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -59,6 +60,10 @@ public class TaskService {
     public TaskDto updateTask(TaskDto taskDto) {
         Task task = taskRepository.findById(taskDto.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Задача не найдена"));
+
+        if (task.isCompleted() == true) {
+            throw new TaskCompletedException("Нельзя изменить завершенную задачу!");
+        }
 
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
