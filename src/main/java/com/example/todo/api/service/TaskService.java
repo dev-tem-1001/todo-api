@@ -5,20 +5,23 @@ import com.example.todo.api.exception.TaskCompletedException;
 import com.example.todo.api.model.Task;
 import com.example.todo.api.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TaskService {
 
     private final TaskRepository taskRepository;
 
-    // Task -> DTO
-    public TaskDto createDto(Task task) {
+    // Entity -> DTO
+    public TaskDto mapToDto(Task task) {
         // если я получил данные task, зачем второй раз лезть в бд
         // Task task = taskRepository.findById(taskToDto.getId()).orElseThrow();
         return TaskDto.builder()
@@ -29,16 +32,25 @@ public class TaskService {
                 .build();
     }
 
-    // DTO -> Task
-    public TaskDto createTask(TaskDto taskDto) {
+    // DTO -> Entity
+    public Task mapToEntity(TaskDto taskDto) {
         Task task = new Task();
         task.setTitle(taskDto.getTitle());
         task.setDescription(taskDto.getDescription());
         task.setCompleted(taskDto.isCompleted());
 
+        return task;
+    }
+
+    // CREATE
+    public TaskDto createTask(TaskDto taskDto) {
+        Task task = mapToEntity(taskDto);
+
         Task savedTask = taskRepository.save(task);
 
-        return createDto(savedTask);
+        log.info("Создана новая задача: {}", savedTask);
+
+        return mapToDto(savedTask);
     }
 
     // GET
@@ -46,22 +58,31 @@ public class TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Задача не найдена"));
 
-        return createDto(task);
+        log.info("Задача c ID: {} получена: {}", id, task);
+
+        return mapToDto(task);
     }
 
+    // GET
     public List<TaskDto> getAllTasks() {
         List<Task> allTasks = taskRepository.findAll();
 
-        List<TaskDto> listFromTaskToTaskDto = allTasks.stream().map(task -> createDto(task)).toList();
+        List<TaskDto> listFromTaskToTaskDto = allTasks
+                .stream()
+                .map(task -> mapToDto(task))
+                .toList();
+
+        log.info("Все задачи получены");
 
         return listFromTaskToTaskDto;
     }
 
+    // PUT
     public TaskDto updateTask(TaskDto taskDto) {
         Task task = taskRepository.findById(taskDto.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Задача не найдена"));
 
-        if (task.isCompleted() == true) {
+        if (task.isCompleted()) {
             throw new TaskCompletedException("Нельзя изменить завершенную задачу!");
         }
 
@@ -71,14 +92,22 @@ public class TaskService {
 
         taskRepository.save(task);
 
-        return createDto(task);
+        log.info("Задача обновлена: {}", task);
+
+        return mapToDto(task);
     }
 
+    // DELETE
     public void deleteTask(Long id) {
-        if (!taskRepository.existsById(id)) {
+        Optional<Task> task = taskRepository.findById(id);
+
+        if (task.isEmpty()) {
+            log.warn("Задача не найдена");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Задача не найдена");
         }
 
-        taskRepository.deleteById(id);
+        log.info("Задача удалена: {}", task);
+
+        taskRepository.delete(task.get());
     }
 }

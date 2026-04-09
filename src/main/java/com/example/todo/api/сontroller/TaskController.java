@@ -31,16 +31,16 @@ public class TaskController {
         return taskService.getAllTasks();
     }
 
-    @DeleteMapping("/tasks/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT) // Ничего не возвращаем
-    public void deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
-    }
-
     @PutMapping("/tasks/{id}")
     public TaskDto updateTask(@PathVariable Long id, @RequestBody TaskDto taskDto) {
         taskDto.setId(id);
 
         return taskService.updateTask(taskDto);
+    }
+
+    @DeleteMapping("/tasks/{id}")
+    // @ResponseStatus(HttpStatus.NO_CONTENT) // Ничего не возвращаем
+    public void deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
     }
 }
