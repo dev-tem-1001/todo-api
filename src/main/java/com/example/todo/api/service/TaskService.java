@@ -2,13 +2,12 @@ package com.example.todo.api.service;
 
 import com.example.todo.api.dto.TaskDto;
 import com.example.todo.api.exception.TaskCompletedException;
+import com.example.todo.api.exception.TaskNotFoundException;
 import com.example.todo.api.model.Task;
 import com.example.todo.api.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +21,6 @@ public class TaskService {
 
     // Entity -> DTO
     public TaskDto mapToDto(Task task) {
-        // если я получил данные task, зачем второй раз лезть в бд
-        // Task task = taskRepository.findById(taskToDto.getId()).orElseThrow();
         return TaskDto.builder()
                 .id(task.getId())
                 .title(task.getTitle())
@@ -56,7 +53,7 @@ public class TaskService {
     // GET
     public TaskDto getById(Long id) {
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Задача не найдена"));
+                .orElseThrow(() -> new TaskNotFoundException("Задача с ID: " + id +" не найдена"));
 
         log.info("Задача c ID: {} получена: {}", id, task);
 
@@ -80,7 +77,7 @@ public class TaskService {
     // PUT
     public TaskDto updateTask(TaskDto taskDto) {
         Task task = taskRepository.findById(taskDto.getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Задача не найдена"));
+                .orElseThrow(() -> new TaskNotFoundException("Задача с ID: " + taskDto.getId() +" не найдена"));
 
         if (task.isCompleted()) {
             throw new TaskCompletedException("Нельзя изменить завершенную задачу!");
@@ -102,8 +99,8 @@ public class TaskService {
         Optional<Task> task = taskRepository.findById(id);
 
         if (task.isEmpty()) {
-            log.warn("Задача не найдена");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Задача не найдена");
+            log.warn("Задача ID: {} не найдена", id);
+            throw new TaskNotFoundException("Задача с ID: " + id +" не найдена");
         }
 
         log.info("Задача удалена: {}", task);

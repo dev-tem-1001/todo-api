@@ -39,7 +39,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/tasks/{id}")
-    // @ResponseStatus(HttpStatus.NO_CONTENT) // Ничего не возвращаем
+    @ResponseStatus(HttpStatus.NO_CONTENT) // Ничего не возвращаем
     public void deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
     }

@@ -22,4 +22,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> taskCompletedException(TaskCompletedException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<String> taskNotFoundException(TaskNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ex.getMessage());
+    }
 }
