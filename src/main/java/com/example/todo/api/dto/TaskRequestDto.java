@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 // POST/PUT (запрос)
 @Data
 @Builder
@@ -22,4 +23,5 @@ public class TaskRequestDto {
     private String description;
 
     private boolean completed = false;
+
 }

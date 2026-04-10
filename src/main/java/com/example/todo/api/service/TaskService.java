@@ -8,6 +8,10 @@ import com.example.todo.api.model.Task;
 import com.example.todo.api.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +31,7 @@ public class TaskService {
                 .title(task.getTitle())
                 .description(task.getDescription())
                 .completed(task.isCompleted())
+                .createdAt(task.getCreatedAt())
                 .build();
     }
 
@@ -107,5 +112,13 @@ public class TaskService {
         log.info("Задача удалена: {}", task);
 
         taskRepository.delete(task);
+    }
+
+    public Page<TaskResponseDto> getAllTasks(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<Task> taskPage = taskRepository.findAll(pageable);
+
+        return taskPage.map(task -> mapToDto(task));
     }
 }

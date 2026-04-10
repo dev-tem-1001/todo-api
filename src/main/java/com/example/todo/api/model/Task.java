@@ -4,13 +4,18 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
+
+@Entity
+@ToString
 @Getter
 @Setter
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@EntityListeners(AuditingEntityListener.class)
 public class Task {
 
     @Id
@@ -30,5 +35,8 @@ public class Task {
 
     @Column(nullable = false)
     private boolean completed = false;
+
+    @CreatedDate
+    private LocalDateTime createdAt;
 
 }

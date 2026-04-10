@@ -5,6 +5,7 @@ import com.example.todo.api.dto.TaskResponseDto;
 import com.example.todo.api.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +28,18 @@ public class TaskController {
         return taskService.getById(id);
     }
 
+
+    //public List<TaskResponseDto> getAllTasks() {
+    //    return taskService.getAllTasks();
+    //}
+
     @GetMapping("/tasks")
-    public List<TaskResponseDto> getAllTasks() {
-        return taskService.getAllTasks();
+    public Page<TaskResponseDto> getAllTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return taskService.getAllTasks(page, size);
     }
+
 
     @PutMapping("/tasks/{id}")
     public TaskResponseDto updateTask(@PathVariable Long id, @RequestBody TaskRequestDto taskRequestDto) {

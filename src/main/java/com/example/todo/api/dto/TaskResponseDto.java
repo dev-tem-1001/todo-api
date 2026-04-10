@@ -1,11 +1,11 @@
 package com.example.todo.api.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 // для GET (ответ)
 @Data
@@ -21,4 +21,7 @@ public class TaskResponseDto {
     private String description;
 
     private boolean completed = false;
+
+    private LocalDateTime createdAt;
+
 }
