@@ -1,6 +1,7 @@
 package com.example.todo.api.сontroller;
 
-import com.example.todo.api.dto.TaskDto;
+import com.example.todo.api.dto.TaskRequestDto;
+import com.example.todo.api.dto.TaskResponseDto;
 import com.example.todo.api.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,25 +18,23 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping("/tasks")
-    public TaskDto createTask(@Valid @RequestBody TaskDto taskDto) {
-        return taskService.createTask(taskDto);
+    public TaskResponseDto createTask(@Valid @RequestBody TaskRequestDto taskRequestDto) {
+        return taskService.createTask(taskRequestDto);
     }
 
     @GetMapping("/tasks/{id}")
-    public TaskDto getTask(@PathVariable Long id) {
+    public TaskResponseDto getTask(@PathVariable Long id) {
         return taskService.getById(id);
     }
 
     @GetMapping("/tasks")
-    public List<TaskDto> getAllTasks() {
+    public List<TaskResponseDto> getAllTasks() {
         return taskService.getAllTasks();
     }
 
     @PutMapping("/tasks/{id}")
-    public TaskDto updateTask(@PathVariable Long id, @RequestBody TaskDto taskDto) {
-        taskDto.setId(id);
-
-        return taskService.updateTask(taskDto);
+    public TaskResponseDto updateTask(@PathVariable Long id, @RequestBody TaskRequestDto taskRequestDto) {
+        return taskService.updateTask(id, taskRequestDto);
     }
 
     @DeleteMapping("/tasks/{id}")
