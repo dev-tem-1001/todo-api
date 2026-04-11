@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -35,7 +33,6 @@ public class TaskController {
             @RequestParam(defaultValue = "10") int size) {
         return taskService.getAllTasks(page, size);
     }
-
 
     @PutMapping("/tasks/{id}")
     public TaskResponseDto updateTask(@PathVariable Long id, @RequestBody TaskRequestDto taskRequestDto) {
