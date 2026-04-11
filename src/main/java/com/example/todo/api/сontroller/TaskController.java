@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,19 +20,14 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping("/tasks")
-    public TaskResponseDto createTask(@Valid @RequestBody TaskRequestDto taskRequestDto) {
-        return taskService.createTask(taskRequestDto);
+    public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto taskRequestDto) {
+        return new ResponseEntity<>(taskService.createTask(taskRequestDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/tasks/{id}")
     public TaskResponseDto getTask(@PathVariable Long id) {
         return taskService.getById(id);
     }
-
-
-    //public List<TaskResponseDto> getAllTasks() {
-    //    return taskService.getAllTasks();
-    //}
 
     @GetMapping("/tasks")
     public Page<TaskResponseDto> getAllTasks(
