@@ -1,4 +1,4 @@
-package com.example.todo.api.сontroller;
+package com.example.todo.api.controller;
 
 import com.example.todo.api.dto.TaskRequestDto;
 import com.example.todo.api.dto.TaskResponseDto;
